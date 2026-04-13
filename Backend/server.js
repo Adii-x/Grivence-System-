@@ -26,11 +26,29 @@ app.use("/api", (req, res, next) => {
   res.set("Cache-Control", "no-store");
   next();
 });
-if (!process.env.ALLOWED_ORIGIN) {
-  throw new Error("ALLOWED_ORIGIN is required for CORS configuration");
-}
+
+const allowedOrigins = (process.env.ALLOWED_ORIGIN || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const corsOptions =
+  allowedOrigins.length > 0
+    ? {
+        origin: (origin, cb) => {
+          // Allow same-origin/server-to-server calls that do not send Origin.
+          if (!origin) return cb(null, true);
+          if (allowedOrigins.includes(origin)) return cb(null, true);
+          return cb(new Error("Not allowed by CORS"));
+        },
+      }
+    : {
+        // Do not crash in hosted environments if ALLOWED_ORIGIN is not set.
+        origin: true,
+      };
+
 app.use("/api", rateLimit({ windowMs: 15 * 60 * 1000, max: 200 }));
-app.use(cors({ origin: process.env.ALLOWED_ORIGIN }));
+app.use(cors(corsOptions));
 app.get("/api/health", (req, res) => res.json({ status: "ok" }));
 app.use("/api/auth", authRoutes);
 app.use("/api/complaints", complaintRoutes);
