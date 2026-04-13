@@ -1,0 +1,10 @@
+const {validationResult}=require('express-validator');
+const Complaint=require('../models/Complaint');
+const Comment=require('../models/Comment');
+const {mapCategoryToDepartment}=require('../utils/departmentMapper');
+const {inferFinalPriority}=require('../utils/keywordEngine');
+const {calculateDeadline}=require('../utils/deadlineCalculator');
+const {uploadToImageKit}=require('../services/storage.service');
+exports.createComplaint=async(req,res)=>{const errors=validationResult(req); if(!errors.isEmpty()) return res.status(400).json({message:'Validation failed',errors:errors.array()}); const {title,description,category,priority}=req.body; const finalPriority=inferFinalPriority({title,description,studentPriority:priority}); const assignedDept=mapCategoryToDepartment(category); const attachment=req.file?await uploadToImageKit(req.file):null; const complaint=await Complaint.create({studentId:req.user._id,studentName:req.user.name,title,description,category,studentPriority:priority,finalPriority,assignedDept,deadline:calculateDeadline(finalPriority),attachment}); res.status(201).json({message:'Complaint submitted successfully',complaint});};
+exports.listMyComplaints=async(req,res)=>{const complaints=await Complaint.find({studentId:req.user._id}).sort({createdAt:-1});res.json({complaints,totalCount:complaints.length});};
+exports.getMyComplaintById=async(req,res)=>{const complaint=await Complaint.findOne({_id:req.params.id,studentId:req.user._id}); if(!complaint) return res.status(404).json({message:'Complaint not found'}); const comments=await Comment.find({complaintId:complaint._id}).sort({createdAt:1}); res.json({complaint,comments});};

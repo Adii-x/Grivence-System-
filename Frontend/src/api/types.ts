@@ -1,0 +1,3 @@
+export interface ApiUser{ id:string; name:string; email:string; role:'student'|'staff'|'admin'; department?:string; studentId?:string; year?:string; assignedDept?:string;}
+export interface ApiComplaint{ _id:string; studentId:string; studentName:string; title:string; description:string; category:string; studentPriority:'Low'|'Medium'; finalPriority:'Low'|'Medium'|'High'|'Urgent'; status:'Pending'|'In Progress'|'Resolved'|'Escalated'; assignedDept:string; deadline:string; createdAt:string; updatedAt:string; attachment?:string|null;}
+export interface ApiComment{ _id:string; authorName:string; authorRole:string; message:string; createdAt:string;}

@@ -1,0 +1,7 @@
+const bcrypt=require('bcryptjs');
+const {validationResult}=require('express-validator');
+const User=require('../models/User');
+const generateToken=require('../utils/generateToken');
+const sanitizeUser=(u)=>({id:u._id,name:u.name,email:u.email,role:u.role,department:u.department,studentId:u.studentId,year:u.year,assignedDept:u.assignedDept});
+exports.register=async(req,res)=>{const errors=validationResult(req); if(!errors.isEmpty()) return res.status(400).json({message:'Validation failed',errors:errors.array()}); const {name,email,password,department,studentId,year}=req.body; if(await User.findOne({email})) return res.status(400).json({message:'Email already exists'}); const hashed=await bcrypt.hash(password,10); const user=await User.create({name,email,password:hashed,role:'student',department,studentId,year}); const token=generateToken(user._id.toString()); res.status(201).json({message:'Registration successful',token,user:sanitizeUser(user)});};
+exports.login=async(req,res)=>{const errors=validationResult(req); if(!errors.isEmpty()) return res.status(400).json({message:'Validation failed',errors:errors.array()}); const {email,password}=req.body; const user=await User.findOne({email}).select('+password'); if(!user) return res.status(401).json({message:'Invalid credentials'}); const ok=await bcrypt.compare(password,user.password); if(!ok) return res.status(401).json({message:'Invalid credentials'}); const token=generateToken(user._id.toString()); res.json({message:'Login successful',token,user:sanitizeUser(user)});};

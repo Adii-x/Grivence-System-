@@ -1,0 +1,70 @@
+import type { Config } from "tailwindcss";
+
+export default {
+  darkMode: ["class"],
+  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
+  prefix: "",
+  theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: { "2xl": "1400px" },
+    },
+    extend: {
+      fontFamily: {
+        inter: ["Inter", "sans-serif"],
+      },
+      colors: {
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--bg-base))",
+        foreground: "hsl(var(--text-primary))",
+        surface: "hsl(var(--bg-surface))",
+        elevated: "hsl(var(--bg-elevated))",
+        "text-primary": "hsl(var(--text-primary))",
+        "text-secondary": "hsl(var(--text-secondary))",
+        "text-muted": "hsl(var(--text-muted))",
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          hover: "hsl(var(--accent-hover))",
+          subtle: "hsl(var(--accent-subtle))",
+        },
+        success: "hsl(var(--success))",
+        warning: "hsl(var(--warning))",
+        danger: "hsl(var(--danger))",
+        info: "hsl(var(--info))",
+        primary: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(0 0% 100%)",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--bg-surface))",
+          foreground: "hsl(var(--text-primary))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--bg-elevated))",
+          foreground: "hsl(var(--text-secondary))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--danger))",
+          foreground: "hsl(0 0% 100%)",
+        },
+        card: {
+          DEFAULT: "hsl(var(--bg-surface))",
+          foreground: "hsl(var(--text-primary))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--bg-elevated))",
+          foreground: "hsl(var(--text-primary))",
+        },
+      },
+      borderRadius: {
+        lg: "8px",
+        md: "6px",
+        sm: "4px",
+      },
+    },
+  },
+  plugins: [require("tailwindcss-animate")],
+} satisfies Config;

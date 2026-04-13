@@ -1,0 +1,157 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-base: 0 0% 5%;
+    --bg-surface: 0 0% 7%;
+    --bg-elevated: 0 0% 9%;
+    --border: 0 0% 12%;
+    --border-subtle: 0 0% 9%;
+
+    --text-primary: 0 0% 94%;
+    --text-secondary: 0 0% 53%;
+    --text-muted: 0 0% 29%;
+
+    --accent: 217 91% 60%;
+    --accent-hover: 217 91% 53%;
+    --accent-subtle: 213 52% 24%;
+
+    --success: 142 72% 39%;
+    --warning: 32 95% 44%;
+    --danger: 0 72% 51%;
+    --info: 200 98% 39%;
+
+    --background: var(--bg-base);
+    --foreground: var(--text-primary);
+    --primary: var(--accent);
+    --primary-foreground: 0 0% 100%;
+    --secondary: var(--bg-surface);
+    --secondary-foreground: var(--text-primary);
+    --muted: var(--bg-elevated);
+    --muted-foreground: var(--text-secondary);
+    --card: var(--bg-surface);
+    --card-foreground: var(--text-primary);
+    --popover: var(--bg-elevated);
+    --popover-foreground: var(--text-primary);
+    --destructive: var(--danger);
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 12%;
+    --input: 0 0% 12%;
+    --ring: var(--accent);
+    --radius: 0.5rem;
+  }
+
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    background-color: hsl(var(--bg-base));
+    color: hsl(var(--text-primary));
+  }
+}
+
+/* Cursor trailing dot */
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.35);
+  pointer-events: none;
+  z-index: 9998;
+  will-change: transform;
+}
+
+/* Skeleton shimmer */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, hsl(var(--bg-elevated)) 25%, hsl(0 0% 13%) 50%, hsl(var(--bg-elevated)) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+/* Escalated pulse */
+@keyframes escalated-pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+.badge-escalated-pulse {
+  animation: escalated-pulse 2s ease-in-out infinite;
+}
+
+/* Page transition */
+@keyframes page-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.page-enter {
+  animation: page-enter 180ms ease-out;
+}
+
+/* Card appear */
+@keyframes card-appear {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card-appear {
+  animation: card-appear 200ms ease-out both;
+}
+
+/* Modal */
+@keyframes modal-enter {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.modal-enter {
+  animation: modal-enter 160ms ease-out;
+}
+
+/* Toast slide */
+@keyframes toast-slide-in {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes toast-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.toast-enter {
+  animation: toast-slide-in 200ms ease-out;
+}
+
+.toast-exit {
+  animation: toast-fade-out 200ms ease-out forwards;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: hsl(var(--bg-base));
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 3px;
+}

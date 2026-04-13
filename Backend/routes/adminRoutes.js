@@ -1,0 +1,14 @@
+const express=require('express');
+const {body}=require('express-validator');
+const {listAllComplaints,getAdminComplaintById,assignComplaint,updatePriority,analytics,listDepartments}=require('../controllers/adminController');
+const {protect}=require('../middleware/authMiddleware');
+const {authorizeRoles}=require('../middleware/roleMiddleware');
+const r=express.Router();
+r.use(protect,authorizeRoles('admin'));
+r.get('/complaints',listAllComplaints);
+r.get('/complaints/:id',getAdminComplaintById);
+r.put('/complaints/:id/assign',[body('department').trim().notEmpty()],assignComplaint);
+r.put('/complaints/:id/priority',[body('priority').isIn(['Low','Medium','High','Urgent'])],updatePriority);
+r.get('/analytics',analytics);
+r.get('/departments',listDepartments);
+module.exports=r;

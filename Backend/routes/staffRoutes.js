@@ -1,0 +1,12 @@
+const express=require('express');
+const {body}=require('express-validator');
+const {listAssignedComplaints,getStaffComplaintById,updateComplaintStatus,addComment}=require('../controllers/staffController');
+const {protect}=require('../middleware/authMiddleware');
+const {authorizeRoles}=require('../middleware/roleMiddleware');
+const r=express.Router();
+r.use(protect,authorizeRoles('staff','admin'));
+r.get('/complaints',listAssignedComplaints);
+r.get('/complaints/:id',getStaffComplaintById);
+r.put('/complaints/:id/status',[body('status').isIn(['Pending','In Progress','Resolved','Escalated'])],updateComplaintStatus);
+r.post('/complaints/:id/comment',[body('message').trim().isLength({min:1,max:1000})],addComment);
+module.exports=r;

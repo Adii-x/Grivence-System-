@@ -1,0 +1,1 @@
+const map={Academic:'Computer Science',Infrastructure:'Civil Engineering',Hostel:'Civil Engineering',Library:'Library',Mess:'Business Administration',Safety:'Civil Engineering',Fees:'Business Administration',Faculty:'Computer Science',Examination:'Academic Office',Ragging:'Student Welfare',Other:'General'};module.exports={mapCategoryToDepartment:(c)=>map[c]||'General'};
