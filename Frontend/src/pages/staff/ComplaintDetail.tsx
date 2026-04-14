@@ -48,6 +48,21 @@ const StaffComplaintDetail: React.FC = () => {
           <span className="text-xs text-text-secondary self-center">{complaint.createdAt}</span>
         </div>
         <p className="text-sm text-text-secondary leading-relaxed">{complaint.description}</p>
+        <div className="mt-4">
+          <p className="text-xs text-text-muted mb-1">Attachment</p>
+          {complaint.attachmentUrl ? (
+            <a
+              href={complaint.attachmentUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="text-sm text-accent hover:underline break-all"
+            >
+              View uploaded file
+            </a>
+          ) : (
+            <p className="text-sm text-text-secondary">No attachment provided</p>
+          )}
+        </div>
       </div>
 
       {/* Section 2 — Student Info */}
