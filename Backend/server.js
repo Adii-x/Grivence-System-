@@ -63,7 +63,7 @@ const corsOptions =
 
 app.use("/api", rateLimit({ windowMs: 15 * 60 * 1000, max: 200 }));
 app.use(cors(corsOptions));
-app.options("/api/*", cors(corsOptions));
+app.options(/^\/api\/.*/, cors(corsOptions));
 app.get("/api/health", (req, res) => res.json({ status: "ok" }));
 app.use("/api/auth", authRoutes);
 app.use("/api/complaints", complaintRoutes);
