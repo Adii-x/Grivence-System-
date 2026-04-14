@@ -27,10 +27,21 @@ app.use("/api", (req, res, next) => {
   next();
 });
 
+const normalizeOrigin = (origin) => {
+  try {
+    const parsed = new URL(origin);
+    // Normalize origin strings so trailing slash/case differences do not break CORS checks.
+    return `${parsed.protocol}//${parsed.host}`.toLowerCase();
+  } catch {
+    return origin.trim().replace(/\/+$/, "").toLowerCase();
+  }
+};
+
 const allowedOrigins = (process.env.ALLOWED_ORIGIN || "")
   .split(",")
   .map((origin) => origin.trim())
-  .filter(Boolean);
+  .filter(Boolean)
+  .map(normalizeOrigin);
 
 const corsOptions =
   allowedOrigins.length > 0
@@ -38,17 +49,21 @@ const corsOptions =
         origin: (origin, cb) => {
           // Allow same-origin/server-to-server calls that do not send Origin.
           if (!origin) return cb(null, true);
-          if (allowedOrigins.includes(origin)) return cb(null, true);
-          return cb(new Error("Not allowed by CORS"));
+          const normalizedOrigin = normalizeOrigin(origin);
+          if (allowedOrigins.includes(normalizedOrigin)) return cb(null, true);
+          return cb(new Error(`Not allowed by CORS: ${origin}`));
         },
+        optionsSuccessStatus: 204,
       }
     : {
         // Do not crash in hosted environments if ALLOWED_ORIGIN is not set.
         origin: true,
+        optionsSuccessStatus: 204,
       };
 
 app.use("/api", rateLimit({ windowMs: 15 * 60 * 1000, max: 200 }));
 app.use(cors(corsOptions));
+app.options("/api/*", cors(corsOptions));
 app.get("/api/health", (req, res) => res.json({ status: "ok" }));
 app.use("/api/auth", authRoutes);
 app.use("/api/complaints", complaintRoutes);
