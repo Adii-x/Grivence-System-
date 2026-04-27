@@ -1,1 +1,9 @@
-const cron=require('node-cron');const Complaint=require('../models/Complaint');module.exports=()=>cron.schedule('0 1 * * *',async()=>{await Complaint.updateMany({status:{$ne:'Resolved'},deadline:{$lt:new Date()}},{$set:{status:'Escalated',isEscalated:true}});});
+const cron = require("node-cron");
+const Complaint = require("../models/Complaint");
+module.exports = () =>
+  cron.schedule("0 1 * * *", async () => {
+    await Complaint.updateMany(
+      { status: { $ne: "Resolved" }, deadline: { $lt: new Date() } },
+      { $set: { status: "Escalated", isEscalated: true } },
+    );
+  });

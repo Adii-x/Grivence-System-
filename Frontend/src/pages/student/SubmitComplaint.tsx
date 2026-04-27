@@ -9,6 +9,7 @@ import { showToast } from '../../components/shared/Toast';
 import { Upload, FileText, Image as ImageIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createComplaintApi } from '../../api/complaintsApi';
+import { useAuthStore } from '../../store/authStore';
 
 interface SubmitForm {
   title: string;
@@ -20,11 +21,29 @@ interface SubmitForm {
 const SubmitComplaint: React.FC = () => {
   const navigate = useNavigate();
   const { register, handleSubmit, watch, formState: { errors } } = useForm<SubmitForm>();
+  const { user } = useAuthStore();
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isSubmittingRef = useRef(false);
   const title = watch('title', '');
   const description = watch('description', '');
+  const selectedCategory = watch('category', '');
+
+  const getRoutingPreview = (category: string) => {
+    if (['Academic', 'Faculty', 'Examination'].includes(category)) {
+      return user?.department || 'your department';
+    }
+    if (category === 'Other') {
+      return 'Admin Triage (manual assignment)';
+    }
+    const centralMap: Record<string, string> = {
+      Hostel: 'Hostel Office',
+      Library: 'Library',
+      Infrastructure: 'Civil Engineering',
+      Ragging: 'Student Welfare',
+    };
+    return centralMap[category] || 'Admin Triage';
+  };
 
   const onSubmit = async (data: SubmitForm) => {
     if (isSubmittingRef.current) return;
@@ -43,10 +62,11 @@ const SubmitComplaint: React.FC = () => {
       await createComplaintApi(formData);
       showToast('Complaint submitted successfully', 'success');
       navigate('/student/complaints');
-    } catch (e: any) {
-      const backendErrors = e?.response?.data?.errors;
+    } catch (e: unknown) {
+      const errorResponse = (e as { response?: { data?: { errors?: Array<{ msg?: string }>; message?: string } } })?.response?.data;
+      const backendErrors = errorResponse?.errors;
       const firstValidationMessage = Array.isArray(backendErrors) && backendErrors.length > 0 ? backendErrors[0]?.msg : null;
-      showToast(firstValidationMessage || e?.response?.data?.message || 'Submission failed', 'error');
+      showToast(firstValidationMessage || errorResponse?.message || 'Submission failed', 'error');
     } finally {
       isSubmittingRef.current = false;
       setIsSubmitting(false);
@@ -110,6 +130,14 @@ const SubmitComplaint: React.FC = () => {
               <p className="text-xs text-text-secondary mt-1">Critical issues are automatically detected</p>
             </div>
           </div>
+          {selectedCategory && (
+            <div className="rounded-md border border-border bg-elevated px-3 py-2">
+              <p className="text-xs text-text-muted">Routing preview</p>
+              <p className="text-sm text-text-primary">
+                This complaint will be routed to <span className="font-medium">{getRoutingPreview(selectedCategory)}</span>.
+              </p>
+            </div>
+          )}
 
           <div>
             <label className="text-xs font-medium text-text-secondary mb-1.5 block">Attachment</label>

@@ -49,6 +49,7 @@ const ComplaintHistory: React.FC = () => {
               <div className="flex flex-wrap items-center gap-2 sm:gap-3 flex-1 min-w-0">
                 <span className="text-sm font-medium break-words sm:truncate min-w-0">{c.title}</span>
                 <CategoryTag category={c.category} />
+                <span className="text-xs text-text-secondary">Assigned: {c.department}</span>
               </div>
               <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
                 <PriorityBadge priority={c.priority} />
